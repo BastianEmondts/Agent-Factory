@@ -493,9 +493,9 @@ Gib NUR den Code zurück, keine Erklärungen davor oder danach.`;
 
     state.generatedCode = code.trim();
 
-    // Clean potential markdown code fences (handles leading/trailing whitespace)
+    // Clean potential markdown code fences (handles optional surrounding whitespace)
     let cleanCode = state.generatedCode;
-    const fenceMatch = cleanCode.match(/```[\w]*\n([\s\S]*?)\n```/);
+    const fenceMatch = cleanCode.match(/```[\w]*\s*([\s\S]*?)\s*```/);
     if (fenceMatch) cleanCode = fenceMatch[1].trim();
     state.generatedCode = cleanCode;
 
