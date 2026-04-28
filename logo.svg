@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <clipPath id="box">
+      <rect width="200" height="200" rx="36" ry="36"/>
+    </clipPath>
+  </defs>
+  <!-- Teal rounded-square background -->
+  <rect width="200" height="200" rx="36" ry="36" fill="#009DB4"/>
+  <!-- Letters clipped to the box so nothing bleeds outside -->
+  <g clip-path="url(#box)">
+    <text x="16" y="112" font-family="'Arial Black','Arial',sans-serif" font-weight="900"
+          font-size="92" fill="white">C</text>
+    <text x="102" y="112" font-family="'Arial Black','Arial',sans-serif" font-weight="900"
+          font-size="92" fill="white">S</text>
+  </g>
+  <!-- Campana Schott text below the letters -->
+  <text x="100" y="148" font-family="Arial,Helvetica,sans-serif" font-weight="700"
+        font-size="19" fill="white" text-anchor="middle" letter-spacing="0.3">Campana</text>
+  <text x="100" y="171" font-family="Arial,Helvetica,sans-serif" font-weight="700"
+        font-size="19" fill="white" text-anchor="middle" letter-spacing="0.3">Schott</text>
+</svg>

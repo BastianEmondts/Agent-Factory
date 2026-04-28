@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agent Factory – KI-Agenten Konfigurator</title>
+  <title>Agent Factory – Campana &amp; Schott</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -12,8 +12,11 @@
   <header>
     <div class="header-inner">
       <div class="logo">
-        <span class="logo-icon">🏭</span>
-        <span class="logo-text">Agent Factory</span>
+        <img src="logo.svg" alt="Campana &amp; Schott Logo" class="logo-img" />
+        <div class="logo-texts">
+          <span class="logo-text">Agent Factory</span>
+          <span class="logo-sub">by Campana &amp; Schott</span>
+        </div>
       </div>
       <button class="btn-icon" id="configToggle" title="Azure OpenAI konfigurieren">
         ⚙️ Konfiguration
@@ -90,7 +93,11 @@
     <!-- ── STEP 1: Use-Case ──────────────────────────────────────── -->
     <div class="wizard-step active" id="step1">
       <div class="card">
-        <h2>🎯 Use-Case Beschreibung</h2>
+        <div class="card-header">
+          <span class="card-header-icon">🎯</span>
+          <h2>Use-Case Beschreibung</h2>
+        </div>
+        <div class="card-body">
         <p class="subtitle">
           Beschreiben Sie den Anwendungsfall für Ihren KI-Agenten so detailliert
           wie möglich. Je mehr Informationen Sie angeben, desto besser kann der
@@ -138,13 +145,18 @@
           <div></div>
           <button class="btn-primary" onclick="nextStep(1)">Weiter →</button>
         </div>
+        </div><!-- /.card-body -->
       </div>
     </div>
 
     <!-- ── STEP 2: Platform ──────────────────────────────────────── -->
     <div class="wizard-step" id="step2">
       <div class="card">
-        <h2>🚀 Zielplattform wählen</h2>
+        <div class="card-header">
+          <span class="card-header-icon">🚀</span>
+          <h2>Zielplattform wählen</h2>
+        </div>
+        <div class="card-body">
         <p class="subtitle">
           Für welche Microsoft-Plattform soll der Implementierungscode generiert werden?
         </p>
@@ -187,13 +199,18 @@
           <button class="btn-secondary" onclick="prevStep(2)">← Zurück</button>
           <button class="btn-primary"   onclick="nextStep(2)">Weiter →</button>
         </div>
+        </div><!-- /.card-body -->
       </div>
     </div>
 
     <!-- ── STEP 3: Details ───────────────────────────────────────── -->
     <div class="wizard-step" id="step3">
       <div class="card">
-        <h2>⚙️ Agent-Details konfigurieren</h2>
+        <div class="card-header">
+          <span class="card-header-icon">⚙️</span>
+          <h2>Agent-Details konfigurieren</h2>
+        </div>
+        <div class="card-body">
         <p class="subtitle">
           Definieren Sie Fähigkeiten, Verhalten und Grenzen Ihres Agenten.
         </p>
@@ -301,13 +318,18 @@
           <button class="btn-secondary" onclick="prevStep(3)">← Zurück</button>
           <button class="btn-primary"   onclick="nextStep(3)">Weiter →</button>
         </div>
+        </div><!-- /.card-body -->
       </div>
     </div>
 
     <!-- ── STEP 4: Validation ────────────────────────────────────── -->
     <div class="wizard-step" id="step4">
       <div class="card">
-        <h2>🔍 KI-Validierung &amp; Feedback</h2>
+        <div class="card-header">
+          <span class="card-header-icon">🔍</span>
+          <h2>KI-Validierung &amp; Feedback</h2>
+        </div>
+        <div class="card-body">
         <p class="subtitle">
           Azure OpenAI analysiert Ihren Use-Case, bewertet die Vollständigkeit
           und gibt konkrete Verbesserungsvorschläge.
@@ -388,13 +410,18 @@
             Code generieren →
           </button>
         </div>
+        </div><!-- /.card-body -->
       </div>
     </div>
 
     <!-- ── STEP 5: Result ────────────────────────────────────────── -->
     <div class="wizard-step" id="step5">
       <div class="card">
-        <h2>✨ Generierter Agent-Code</h2>
+        <div class="card-header">
+          <span class="card-header-icon">✨</span>
+          <h2>Generierter Agent-Code</h2>
+        </div>
+        <div class="card-body">
         <p class="subtitle">
           Ihr Implementierungscode wurde erfolgreich generiert.
           Kopieren oder laden Sie ihn herunter.
@@ -444,6 +471,7 @@
             <button class="btn-secondary" onclick="startOver()">🔄 Neu starten</button>
           </div>
         </div>
+        </div><!-- /.card-body -->
       </div>
     </div>
 
@@ -455,7 +483,8 @@
   <!-- ── FOOTER ─────────────────────────────────────────────────── -->
   <footer>
     <p>
-      Agent Factory – Powered by Azure OpenAI
+      <img src="logo.svg" alt="CS" class="footer-logo" />
+      Agent Factory &nbsp;|&nbsp; Campana &amp; Schott
       &nbsp;|&nbsp;
       <a href="https://github.com/BastianEmondts/Agent-Factory" target="_blank"
          rel="noopener noreferrer">GitHub</a>
