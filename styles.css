@@ -6,15 +6,28 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+  /* ── Campana & Schott Brand Palette ───────────────────────── */
+  --cs-marine:    #0C2C64;   /* primary dark blue            */
+  --cs-azure:     #1F6ED5;   /* primary medium blue          */
+  --cs-palmtree:  #0CAEA1;   /* primary teal  (logo color)   */
+  --cs-lime:      #A6D900;   /* accent – focus               */
+  --cs-sky:       #8DCFEB;   /* accent – light blue          */
+  --cs-coral:     #F27E65;   /* accent – coral               */
+  --cs-sand:      #E4D0B3;   /* neutral – sand               */
+  --cs-stone:     #B8BCBF;   /* neutral – stone              */
+  --cs-midnight:  #1B2B4A;   /* dark surfaces / footer       */
+  --cs-white:     #FFFFFF;
+
+  /* ── Functional tokens (mapped to CS palette) ─────────────── */
   --bg:          #f0f4f6;
   --surface:     #ffffff;
   --border:      #dde4ea;
-  --text:        #1a2b3c;
+  --text:        #1B2B4A;           /* CS Midnight               */
   --text-muted:  #5a7184;
-  --primary:     #009DB4;
-  --primary-dk:  #007A8E;
-  --primary-lt:  #e0f5f8;
-  --accent:      #00798A;
+  --primary:     #0CAEA1;           /* CS Palmtree               */
+  --primary-dk:  #099991;           /* darker Palmtree           */
+  --primary-lt:  #e0f7f6;           /* lighter Palmtree tint     */
+  --accent:      #1F6ED5;           /* CS Azure                  */
   --success:     #059669;
   --success-lt:  #d1fae5;
   --warning:     #d97706;
@@ -71,8 +84,8 @@ header {
   gap: .75rem;
 }
 .logo-img {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 10px;
   flex-shrink: 0;
 }
@@ -114,7 +127,7 @@ header {
 
 /* ── Config Panel ─────────────────────────────────────────────── */
 .config-panel {
-  background: #1a2b3c;
+  background: var(--cs-marine);
   border-bottom: 3px solid var(--primary);
   color: #fff;
 }
@@ -558,7 +571,7 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #1a2b3c;
+  background: var(--cs-midnight);
   padding: .5rem .75rem;
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   gap: .5rem;
@@ -606,7 +619,7 @@ main {
   bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
-  background: #1a2b3c;
+  background: var(--cs-midnight);
   color: #fff;
   padding: .65rem 1.4rem;
   border-radius: 100px;
@@ -624,7 +637,7 @@ main {
 
 /* ── Footer ───────────────────────────────────────────────────── */
 footer {
-  background: #1a2b3c;
+  background: var(--cs-midnight);
   color: #94a3b8;
   text-align: center;
   padding: 1rem;
@@ -638,11 +651,11 @@ footer p {
   flex-wrap: wrap;
 }
 .footer-logo {
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   vertical-align: middle;
 }
-footer a { color: #5ec8d8; text-decoration: none; }
+footer a { color: var(--cs-sky); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
