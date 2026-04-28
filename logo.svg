@@ -1,21 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
   <defs>
     <clipPath id="box">
-      <rect width="200" height="200" rx="36" ry="36"/>
+      <rect width="200" height="200" rx="34" ry="34"/>
     </clipPath>
   </defs>
-  <!-- CS Palmtree rounded-square background (#0CAEA1) -->
-  <rect width="200" height="200" rx="36" ry="36" fill="#0CAEA1"/>
-  <!-- Letters clipped to the box so nothing bleeds outside -->
+  <!-- CS Palmtree background (#0CAEA1) -->
+  <rect width="200" height="200" rx="34" ry="34" fill="#0CAEA1"/>
+  <!-- CS lettering — Century Gothic / Trebuchet give the rounded geometric look -->
   <g clip-path="url(#box)">
-    <text x="16" y="112" font-family="'Arial Black','Arial',sans-serif" font-weight="900"
-          font-size="92" fill="white">C</text>
-    <text x="102" y="112" font-family="'Arial Black','Arial',sans-serif" font-weight="900"
-          font-size="92" fill="white">S</text>
+    <text x="100" y="108"
+          font-family="'Century Gothic','Trebuchet MS','Gill Sans MT','Gill Sans',Tahoma,sans-serif"
+          font-weight="800"
+          font-size="96"
+          fill="white"
+          text-anchor="middle"
+          letter-spacing="4">CS</text>
   </g>
-  <!-- Campana Schott text below the letters -->
-  <text x="100" y="148" font-family="Arial,Helvetica,sans-serif" font-weight="700"
-        font-size="19" fill="white" text-anchor="middle" letter-spacing="0.3">Campana</text>
-  <text x="100" y="171" font-family="Arial,Helvetica,sans-serif" font-weight="700"
-        font-size="19" fill="white" text-anchor="middle" letter-spacing="0.3">Schott</text>
+  <!-- Campana Schott label -->
+  <text x="100" y="144"
+        font-family="'Century Gothic','Trebuchet MS','Gill Sans MT','Gill Sans',Tahoma,sans-serif"
+        font-weight="700"
+        font-size="18"
+        fill="white"
+        text-anchor="middle"
+        letter-spacing="0.5">Campana</text>
+  <text x="100" y="166"
+        font-family="'Century Gothic','Trebuchet MS','Gill Sans MT','Gill Sans',Tahoma,sans-serif"
+        font-weight="700"
+        font-size="18"
+        fill="white"
+        text-anchor="middle"
+        letter-spacing="0.5">Schott</text>
 </svg>
