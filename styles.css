@@ -216,10 +216,37 @@ main {
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 2rem;
+  padding: 0;
   border: 1px solid var(--border);
+  overflow: hidden;
 }
-.card h2 {
+
+/* Card header bar — matches the example's section header style */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.card-header-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.card-header h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.card-body {
+  padding: 2rem;
+}
+
+/* Legacy: when card h2 is used without .card-header wrapper */
+.card > h2 {
   font-size: 1.35rem;
   font-weight: 700;
   margin-bottom: .4rem;
