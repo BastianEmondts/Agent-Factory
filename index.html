@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Factory – KI-Agenten Konfigurator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ── HEADER ─────────────────────────────────────────────────── -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🏭</span>
+        <span class="logo-text">Agent Factory</span>
+      </div>
+      <button class="btn-icon" id="configToggle" title="Azure OpenAI konfigurieren">
+        ⚙️ Konfiguration
+      </button>
+    </div>
+  </header>
+
+  <!-- ── CONFIG PANEL ───────────────────────────────────────────── -->
+  <div class="config-panel hidden" id="configPanel">
+    <div class="config-inner">
+      <h3>Azure OpenAI Konfiguration</h3>
+      <div class="form-group">
+        <label for="apiEndpoint">API Endpoint</label>
+        <input type="url" id="apiEndpoint"
+               placeholder="https://your-resource.openai.azure.com/" />
+      </div>
+      <div class="form-group">
+        <label for="apiKey">API Key</label>
+        <input type="password" id="apiKey"
+               placeholder="Ihr Azure OpenAI API Key" />
+      </div>
+      <div class="form-group">
+        <label for="deploymentName">Deployment Name</label>
+        <input type="text" id="deploymentName"
+               placeholder="gpt-4o" />
+      </div>
+      <div class="form-group">
+        <label for="apiVersion">API Version</label>
+        <input type="text" id="apiVersion"
+               placeholder="2024-02-15-preview"
+               value="2024-02-15-preview" />
+      </div>
+      <div class="config-actions">
+        <button class="btn-secondary" id="testConnection">🔗 Verbindung testen</button>
+        <button class="btn-primary"   id="saveConfig">💾 Speichern &amp; Schließen</button>
+      </div>
+      <div id="connectionStatus"></div>
+    </div>
+  </div>
+
+  <!-- ── MAIN ───────────────────────────────────────────────────── -->
+  <main>
+
+    <!-- Progress bar -->
+    <div class="progress-bar-wrap">
+      <div class="progress-steps">
+        <div class="step active" data-step="1">
+          <div class="step-circle">1</div>
+          <span class="step-label">Use-Case</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="2">
+          <div class="step-circle">2</div>
+          <span class="step-label">Plattform</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="3">
+          <div class="step-circle">3</div>
+          <span class="step-label">Details</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="4">
+          <div class="step-circle">4</div>
+          <span class="step-label">Validierung</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="5">
+          <div class="step-circle">5</div>
+          <span class="step-label">Ergebnis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: Use-Case ──────────────────────────────────────── -->
+    <div class="wizard-step active" id="step1">
+      <div class="card">
+        <h2>🎯 Use-Case Beschreibung</h2>
+        <p class="subtitle">
+          Beschreiben Sie den Anwendungsfall für Ihren KI-Agenten so detailliert
+          wie möglich. Je mehr Informationen Sie angeben, desto besser kann der
+          Agent konfiguriert werden.
+        </p>
+
+        <div class="form-group">
+          <label for="agentName">Name des Agenten <span class="req">*</span></label>
+          <input type="text" id="agentName"
+                 placeholder="z. B. Kundenservice-Assistent" />
+        </div>
+
+        <div class="form-group">
+          <label for="useCaseDescription">
+            Problemstellung und Ziel <span class="req">*</span>
+          </label>
+          <textarea id="useCaseDescription" rows="6"
+            placeholder="Was soll der Agent lösen? Welches Problem adressiert er? Wer sind die Nutzer? Welche Prozesse soll er unterstützen oder automatisieren?"></textarea>
+          <div class="char-hint">
+            <span id="charCount">0</span> Zeichen
+            <span id="charHint" class="char-hint-msg"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="targetUsers">Zielgruppe <span class="req">*</span></label>
+            <input type="text" id="targetUsers"
+                   placeholder="z. B. Kundenservice-Mitarbeiter, Endkunden" />
+          </div>
+          <div class="form-group">
+            <label for="businessContext">Geschäftlicher Kontext</label>
+            <input type="text" id="businessContext"
+                   placeholder="z. B. E-Commerce, Versicherung, HR" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="mainGoals">Hauptziele (kommagetrennt)</label>
+          <input type="text" id="mainGoals"
+                 placeholder="z. B. Anfragen automatisieren, Wartezeiten reduzieren, 24/7 Verfügbarkeit" />
+        </div>
+
+        <div class="nav-buttons">
+          <div></div>
+          <button class="btn-primary" onclick="nextStep(1)">Weiter →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: Platform ──────────────────────────────────────── -->
+    <div class="wizard-step" id="step2">
+      <div class="card">
+        <h2>🚀 Zielplattform wählen</h2>
+        <p class="subtitle">
+          Für welche Microsoft-Plattform soll der Implementierungscode generiert werden?
+        </p>
+
+        <div class="platform-grid">
+          <!-- Copilot Studio -->
+          <div class="platform-card" id="card-copilot"
+               onclick="selectPlatform('copilot')">
+            <div class="platform-icon">🤖</div>
+            <h3>Microsoft Copilot Studio</h3>
+            <p>Erstellt eine YAML-Konfiguration für Microsoft Copilot Studio
+               (Power Platform). Ideal für:</p>
+            <ul>
+              <li>Low-Code / No-Code Ansätze</li>
+              <li>Integration mit Microsoft 365</li>
+              <li>Teams &amp; SharePoint</li>
+              <li>Power Automate Workflows</li>
+            </ul>
+            <div class="platform-badge">YAML Konfiguration</div>
+          </div>
+
+          <!-- Azure AI Foundry -->
+          <div class="platform-card" id="card-foundry"
+               onclick="selectPlatform('foundry')">
+            <div class="platform-icon">⚡</div>
+            <h3>Azure AI Foundry</h3>
+            <p>Erstellt Python-Code mit dem Azure AI Projects SDK für
+               Azure AI Foundry. Ideal für:</p>
+            <ul>
+              <li>Pro-Code Implementierungen</li>
+              <li>Erweiterte KI-Funktionen</li>
+              <li>Custom Plugins &amp; Tools</li>
+              <li>Enterprise-Skalierung</li>
+            </ul>
+            <div class="platform-badge">Python SDK Code</div>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="prevStep(2)">← Zurück</button>
+          <button class="btn-primary"   onclick="nextStep(2)">Weiter →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Details ───────────────────────────────────────── -->
+    <div class="wizard-step" id="step3">
+      <div class="card">
+        <h2>⚙️ Agent-Details konfigurieren</h2>
+        <p class="subtitle">
+          Definieren Sie Fähigkeiten, Verhalten und Grenzen Ihres Agenten.
+        </p>
+
+        <!-- Tone -->
+        <div class="form-group">
+          <label>Kommunikationsstil <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="tone" value="professional" />
+              Professionell &amp; Formell
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="tone" value="friendly" />
+              Freundlich &amp; Locker
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="tone" value="technical" />
+              Technisch &amp; Präzise
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="tone" value="empathetic" />
+              Einfühlsam &amp; Unterstützend
+            </label>
+          </div>
+        </div>
+
+        <!-- Languages -->
+        <div class="form-group">
+          <label>Sprache(n)</label>
+          <div class="checkbox-group">
+            <label class="checkbox-option">
+              <input type="checkbox" name="language" value="de" checked /> Deutsch
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="language" value="en" /> Englisch
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="language" value="fr" /> Französisch
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="language" value="es" /> Spanisch
+            </label>
+          </div>
+        </div>
+
+        <!-- Capabilities -->
+        <div class="form-group">
+          <label>Fähigkeiten (mehrere wählbar)</label>
+          <div class="checkbox-group">
+            <label class="checkbox-option">
+              <input type="checkbox" name="capability" value="faq" />
+              FAQ Beantwortung
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="capability" value="search" />
+              Dokumentensuche
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="capability" value="ticketing" />
+              Ticket-Erstellung
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="capability" value="calendar" />
+              Kalender / Terminverwaltung
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="capability" value="data" />
+              Datenbankabfragen
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="capability" value="email" />
+              E-Mail Verarbeitung
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="capability" value="escalation" />
+              Eskalation zu Mitarbeiter
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" name="capability" value="analytics" />
+              Reporting &amp; Analytics
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="integrations">Integrationen &amp; Datenquellen</label>
+          <textarea id="integrations" rows="3"
+            placeholder="z. B. SharePoint, SAP, CRM-System, interne Datenbank, REST-API …"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="constraints">Einschränkungen &amp; Grenzen des Agenten</label>
+          <textarea id="constraints" rows="3"
+            placeholder="Was soll der Agent NICHT tun? Welche Grenzen soll er haben?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="successMetrics">Erfolgskriterien / KPIs</label>
+          <textarea id="successMetrics" rows="2"
+            placeholder="z. B. 80 % der Anfragen automatisch beantwortet, Reaktionszeit &lt; 2 Sek."></textarea>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="prevStep(3)">← Zurück</button>
+          <button class="btn-primary"   onclick="nextStep(3)">Weiter →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: Validation ────────────────────────────────────── -->
+    <div class="wizard-step" id="step4">
+      <div class="card">
+        <h2>🔍 KI-Validierung &amp; Feedback</h2>
+        <p class="subtitle">
+          Azure OpenAI analysiert Ihren Use-Case, bewertet die Vollständigkeit
+          und gibt konkrete Verbesserungsvorschläge.
+        </p>
+
+        <!-- Idle state -->
+        <div id="valIdle">
+          <div class="info-box">
+            <strong>Was wird analysiert?</strong>
+            <ul>
+              <li>Vollständigkeit der Beschreibung (Score 1–10)</li>
+              <li>Geschäftlicher Impact &amp; Mehrwert</li>
+              <li>Stärken Ihres Use-Cases</li>
+              <li>Fehlende oder unklare Informationen</li>
+              <li>Konkrete Verbesserungsvorschläge</li>
+            </ul>
+          </div>
+          <div style="text-align:center;margin-top:1.5rem;">
+            <button class="btn-primary btn-large" onclick="startValidation()">
+              🚀 Validierung starten
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="valLoading" class="loader-wrap hidden">
+          <div class="spinner"></div>
+          <p>Analysiere Use-Case mit Azure OpenAI …</p>
+        </div>
+
+        <!-- Results -->
+        <div id="valResults" class="hidden">
+
+          <div class="score-row">
+            <div class="score-circle" id="scoreCircle">
+              <span id="scoreValue">–</span>
+              <small>/10</small>
+            </div>
+            <div class="score-meta">
+              <h3 id="scoreLabel">Vollständigkeit</h3>
+              <p id="scoreDesc"></p>
+            </div>
+          </div>
+
+          <div class="feedback-block">
+            <h4>📊 Impact-Analyse</h4>
+            <div id="fbImpact"></div>
+          </div>
+
+          <div class="feedback-block">
+            <h4>✅ Stärken</h4>
+            <ul id="fbStrengths"></ul>
+          </div>
+
+          <div class="feedback-block" id="fbMissingWrap">
+            <h4>⚠️ Fehlende / unklare Informationen</h4>
+            <ul id="fbMissing"></ul>
+          </div>
+
+          <div class="feedback-block">
+            <h4>💡 Verbesserungsvorschläge</h4>
+            <ul id="fbImprovements"></ul>
+          </div>
+
+          <div id="proceedMsg" class="proceed-msg"></div>
+
+          <div style="text-align:center;margin-top:1rem;">
+            <button class="btn-secondary btn-sm" onclick="startValidation()">
+              🔄 Erneut validieren
+            </button>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="prevStep(4)">← Zurück</button>
+          <button class="btn-primary" id="btnGenerate"
+                  onclick="nextStep(4)" disabled>
+            Code generieren →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 5: Result ────────────────────────────────────────── -->
+    <div class="wizard-step" id="step5">
+      <div class="card">
+        <h2>✨ Generierter Agent-Code</h2>
+        <p class="subtitle">
+          Ihr Implementierungscode wurde erfolgreich generiert.
+          Kopieren oder laden Sie ihn herunter.
+        </p>
+
+        <!-- Loading -->
+        <div id="genLoading" class="loader-wrap">
+          <div class="spinner"></div>
+          <p>Generiere Agent-Code mit Azure OpenAI …</p>
+        </div>
+
+        <!-- Result tabs -->
+        <div id="genResults" class="hidden">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="code"
+                    onclick="showTab('code',this)">📄 Code</button>
+            <button class="tab-btn" data-tab="summary"
+                    onclick="showTab('summary',this)">📋 Zusammenfassung</button>
+            <button class="tab-btn" data-tab="instructions"
+                    onclick="showTab('instructions',this)">📖 Deployment-Anleitung</button>
+          </div>
+
+          <!-- Code tab -->
+          <div class="tab-content" id="tab-code">
+            <div class="code-toolbar">
+              <span class="code-lang" id="codeLang"></span>
+              <div>
+                <button class="btn-icon-sm" onclick="copyCode()">📋 Kopieren</button>
+                <button class="btn-icon-sm" onclick="downloadCode()">⬇️ Download</button>
+              </div>
+            </div>
+            <pre id="generatedCode" class="code-block"></pre>
+          </div>
+
+          <!-- Summary tab -->
+          <div class="tab-content hidden" id="tab-summary">
+            <div id="agentSummary" class="prose"></div>
+          </div>
+
+          <!-- Instructions tab -->
+          <div class="tab-content hidden" id="tab-instructions">
+            <div id="deployInstructions" class="prose"></div>
+          </div>
+
+          <div class="result-actions">
+            <button class="btn-secondary" onclick="prevStep(5)">← Zurück</button>
+            <button class="btn-secondary" onclick="startOver()">🔄 Neu starten</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── TOAST ──────────────────────────────────────────────────── -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+  <footer>
+    <p>
+      Agent Factory – Powered by Azure OpenAI
+      &nbsp;|&nbsp;
+      <a href="https://github.com/BastianEmondts/Agent-Factory" target="_blank"
+         rel="noopener noreferrer">GitHub</a>
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
