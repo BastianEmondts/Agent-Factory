@@ -4,8 +4,8 @@
       <rect width="200" height="200" rx="36" ry="36"/>
     </clipPath>
   </defs>
-  <!-- Teal rounded-square background -->
-  <rect width="200" height="200" rx="36" ry="36" fill="#009DB4"/>
+  <!-- CS Palmtree rounded-square background (#0CAEA1) -->
+  <rect width="200" height="200" rx="36" ry="36" fill="#0CAEA1"/>
   <!-- Letters clipped to the box so nothing bleeds outside -->
   <g clip-path="url(#box)">
     <text x="16" y="112" font-family="'Arial Black','Arial',sans-serif" font-weight="900"
