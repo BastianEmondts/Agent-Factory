@@ -85,6 +85,11 @@
         <div class="step-line"></div>
         <div class="step" data-step="5">
           <div class="step-circle">5</div>
+          <span class="step-label">Doku &amp; Tests</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="6">
+          <div class="step-circle">6</div>
           <span class="step-label">Ergebnis</span>
         </div>
       </div>
@@ -407,6 +412,49 @@
           <button class="btn-secondary" onclick="prevStep(4)">← Zurück</button>
           <button class="btn-primary" id="btnGenerate"
                   onclick="nextStep(4)" disabled>
+            Weiter →
+          </button>
+        </div>
+        </div><!-- /.card-body -->
+      </div>
+    </div>
+
+    <!-- ── STEP 5: Dokumentation & Test-Cases ────────────────────── -->
+    <div class="wizard-step" id="step5">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-header-icon">📋</span>
+          <h2>Dokumentation &amp; Test-Cases</h2>
+        </div>
+        <div class="card-body">
+        <p class="subtitle">
+          Azure OpenAI erstellt eine kurze Dokumentation und 10 Test-Cases für
+          Ihren Agenten, bevor der Implementierungscode generiert wird.
+        </p>
+
+        <!-- Loading -->
+        <div id="docsLoading" class="loader-wrap">
+          <div class="spinner"></div>
+          <p>Erstelle Dokumentation und Test-Cases mit Azure OpenAI …</p>
+        </div>
+
+        <!-- Results -->
+        <div id="docsResults" class="hidden">
+          <div class="feedback-block">
+            <h4>📄 Kurz-Dokumentation</h4>
+            <div id="docsContent" class="prose"></div>
+          </div>
+
+          <div class="feedback-block">
+            <h4>🧪 Test-Cases</h4>
+            <div id="testCasesContent"></div>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn-secondary" onclick="prevStep(5)">← Zurück</button>
+          <button class="btn-primary" id="btnProceedToCode"
+                  onclick="nextStep(5)" disabled>
             Code generieren →
           </button>
         </div>
@@ -414,8 +462,8 @@
       </div>
     </div>
 
-    <!-- ── STEP 5: Result ────────────────────────────────────────── -->
-    <div class="wizard-step" id="step5">
+    <!-- ── STEP 6: Result ────────────────────────────────────────── -->
+    <div class="wizard-step" id="step6">
       <div class="card">
         <div class="card-header">
           <span class="card-header-icon">✨</span>
@@ -467,7 +515,7 @@
           </div>
 
           <div class="result-actions">
-            <button class="btn-secondary" onclick="prevStep(5)">← Zurück</button>
+            <button class="btn-secondary" onclick="prevStep(6)">← Zurück</button>
             <button class="btn-secondary" onclick="startOver()">🔄 Neu starten</button>
           </div>
         </div>
