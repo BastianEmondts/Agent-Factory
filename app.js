@@ -478,7 +478,7 @@ Antworte mit folgendem JSON-Format (alle Texte auf Deutsch):
     }
   ]
 }
-Erstelle genau 10 Test-Cases die verschiedene Szenarien abdecken: normale Anfragen, Grenzfälle, Fehleingaben und Eskalationsszenarien.`;
+Erstelle genau 10 Test-Cases, die verschiedene Szenarien abdecken: normale Anfragen, Grenzfälle, Fehleingaben und Eskalationsszenarien.`;
 
   try {
     const raw = await callAzureOpenAI(
@@ -489,7 +489,17 @@ Erstelle genau 10 Test-Cases die verschiedene Szenarien abdecken: normale Anfrag
       true
     );
 
-    const json = JSON.parse(raw);
+    // Strip optional markdown code fences before parsing
+    let rawClean = raw.trim();
+    const fenceMatch = rawClean.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (fenceMatch) rawClean = fenceMatch[1].trim();
+
+    let json;
+    try {
+      json = JSON.parse(rawClean);
+    } catch (_) {
+      throw new Error('Die KI-Antwort konnte nicht als JSON verarbeitet werden. Bitte erneut versuchen.');
+    }
     renderDocsAndTests(json);
     state.docsGenerated = true;
     document.getElementById('btnProceedToCode').disabled = false;
@@ -533,7 +543,7 @@ function renderDocsAndTests (json) {
 
       [
         { label: 'Szenario',            value: tc.scenario },
-        { label: 'Eingabe',             value: `"${tc.input}"` },
+        { label: 'Eingabe',             value: tc.input },
         { label: 'Erwartetes Ergebnis', value: tc.expectedOutput },
       ].forEach(({ label, value }) => {
         const p   = document.createElement('p');
