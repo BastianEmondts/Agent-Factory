@@ -32,6 +32,7 @@ const state = {
     canProceed: false,
     json:       null,
   },
+  docsGenerated: false,
   generatedCode: '',
 };
 
@@ -124,8 +125,10 @@ function nextStep (current) {
   const next = current + 1;
   switchStep(current, next);
 
-  // Auto-trigger code generation when entering step 5
-  if (next === 5) generateCode();
+  // Auto-trigger docs & test case generation when entering step 5
+  if (next === 5) generateDocsAndTests();
+  // Auto-trigger code generation when entering step 6
+  if (next === 6) generateCode();
 }
 
 function prevStep (current) {
@@ -161,6 +164,7 @@ function validateStep (step) {
     case 2: return validateStep2();
     case 3: return validateStep3();
     case 4: return validateStep4();
+    case 5: return validateStep5();
     default: return true;
   }
 }
@@ -236,6 +240,14 @@ function validateStep3 () {
 function validateStep4 () {
   if (!state.validation.canProceed) {
     toast('Bitte führen Sie die Validierung durch und verbessern ggf. die Beschreibung.');
+    return false;
+  }
+  return true;
+}
+
+function validateStep5 () {
+  if (!state.docsGenerated) {
+    toast('Bitte warten Sie, bis Dokumentation und Test-Cases fertig geladen sind.');
     return false;
   }
   return true;
@@ -418,6 +430,134 @@ function renderList (elId, items) {
     li.textContent = item;
     ul.appendChild(li);
   });
+}
+
+// ── Documentation & Test-Cases Generation ────────────────────────
+async function generateDocsAndTests () {
+  document.getElementById('docsLoading').classList.remove('hidden');
+  document.getElementById('docsResults').classList.add('hidden');
+  document.getElementById('btnProceedToCode').disabled = true;
+  state.docsGenerated = false;
+
+  const f = state.form;
+  const capLabels = {
+    faq: 'FAQ Beantwortung', search: 'Dokumentensuche', ticketing: 'Ticket-Erstellung',
+    calendar: 'Kalender/Terminverwaltung', data: 'Datenbankabfragen',
+    email: 'E-Mail Verarbeitung', escalation: 'Eskalation zu Mitarbeiter',
+    analytics: 'Reporting & Analytics',
+  };
+  const platformLabel = f.platform === 'copilot' ? 'Microsoft Copilot Studio' : 'Azure AI Foundry';
+
+  const systemPrompt = `Du bist ein erfahrener KI-Berater und Softwarearchitekt.
+Erstelle eine kompakte Dokumentation und genau 10 konkrete Test-Cases für einen KI-Agenten.
+Antworte ausschließlich mit einem validen JSON-Objekt ohne Markdown-Codeblöcke.`;
+
+  const userPrompt = `Erstelle Dokumentation und Test-Cases für folgenden Agenten:
+
+Agent-Name: ${f.agentName}
+Problemstellung/Ziel: ${f.useCaseDescription}
+Zielgruppe: ${f.targetUsers}
+Geschäftlicher Kontext: ${f.businessContext || '(nicht angegeben)'}
+Hauptziele: ${f.mainGoals || '(nicht angegeben)'}
+Zielplattform: ${platformLabel}
+Fähigkeiten: ${f.capabilities.map(c => capLabels[c] || c).join(', ') || '(keine ausgewählt)'}
+Integrationen: ${f.integrations || '(nicht angegeben)'}
+Einschränkungen: ${f.constraints || '(nicht angegeben)'}
+Erfolgskriterien: ${f.successMetrics || '(nicht angegeben)'}
+
+Antworte mit folgendem JSON-Format (alle Texte auf Deutsch):
+{
+  "documentation": "<Kurze Dokumentation des Agenten: Zweck, Zielgruppe, Hauptfunktionen, Einschränkungen – ca. 150–250 Wörter>",
+  "testCases": [
+    {
+      "id": 1,
+      "title": "<Titel des Test-Cases>",
+      "scenario": "<Beschreibung des Testszenarios>",
+      "input": "<Beispiel-Eingabe des Nutzers>",
+      "expectedOutput": "<Erwartete Antwort/Aktion des Agenten>"
+    }
+  ]
+}
+Erstelle genau 10 Test-Cases, die verschiedene Szenarien abdecken: normale Anfragen, Grenzfälle, Fehleingaben und Eskalationsszenarien.`;
+
+  try {
+    const raw = await callAzureOpenAI(
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user',   content: userPrompt },
+      ],
+      true
+    );
+
+    // Strip optional markdown code fences before parsing
+    let rawClean = raw.trim();
+    const fenceMatch = rawClean.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (fenceMatch) rawClean = fenceMatch[1].trim();
+
+    let json;
+    try {
+      json = JSON.parse(rawClean);
+    } catch (_) {
+      throw new Error('Die KI-Antwort konnte nicht als JSON verarbeitet werden. Bitte erneut versuchen.');
+    }
+    renderDocsAndTests(json);
+    state.docsGenerated = true;
+    document.getElementById('btnProceedToCode').disabled = false;
+  } catch (err) {
+    document.getElementById('docsLoading').classList.add('hidden');
+    toast(`Fehler beim Erstellen der Dokumentation: ${err.message}`, 5000);
+  }
+}
+
+function renderDocsAndTests (json) {
+  document.getElementById('docsLoading').classList.add('hidden');
+  document.getElementById('docsResults').classList.remove('hidden');
+
+  // Documentation
+  const docsEl = document.getElementById('docsContent');
+  const docsP  = document.createElement('p');
+  docsP.textContent = json.documentation || '';
+  docsEl.replaceChildren(docsP);
+
+  // Test cases
+  const tcEl = document.getElementById('testCasesContent');
+  tcEl.innerHTML = '';
+  if (Array.isArray(json.testCases)) {
+    json.testCases.forEach(tc => {
+      const card   = document.createElement('div');
+      card.className = 'test-case-card';
+
+      const header = document.createElement('div');
+      header.className = 'test-case-header';
+      const num    = document.createElement('span');
+      num.className   = 'test-case-num';
+      num.textContent = tc.id;
+      const title  = document.createElement('strong');
+      title.textContent = tc.title;
+      header.appendChild(num);
+      header.appendChild(title);
+      card.appendChild(header);
+
+      const body = document.createElement('div');
+      body.className = 'test-case-body';
+
+      [
+        { label: 'Szenario',            value: tc.scenario },
+        { label: 'Eingabe',             value: tc.input },
+        { label: 'Erwartetes Ergebnis', value: tc.expectedOutput },
+      ].forEach(({ label, value }) => {
+        const p   = document.createElement('p');
+        const em  = document.createElement('em');
+        em.textContent = `${label}: `;
+        p.appendChild(em);
+        p.appendChild(document.createTextNode(value));
+        body.appendChild(p);
+      });
+
+      card.appendChild(body);
+      tcEl.appendChild(card);
+    });
+  }
 }
 
 // ── Code Generation ───────────────────────────────────────────────
@@ -618,6 +758,11 @@ function startOver () {
   document.getElementById('valResults').classList.add('hidden');
   document.getElementById('btnGenerate').disabled = true;
 
+  // Reset docs & test cases UI
+  document.getElementById('docsLoading').classList.remove('hidden');
+  document.getElementById('docsResults').classList.add('hidden');
+  document.getElementById('btnProceedToCode').disabled = true;
+
   // Reset generation UI
   document.getElementById('genLoading').classList.remove('hidden');
   document.getElementById('genResults').classList.add('hidden');
@@ -627,6 +772,7 @@ function startOver () {
     businessContext:'', mainGoals:'', platform:null, tone:'', languages:['de'],
     capabilities:[], integrations:'', constraints:'', successMetrics:'' });
   Object.assign(state.validation, { score:0, canProceed:false, json:null });
+  state.docsGenerated = false;
   state.generatedCode = '';
 
   switchStep(state.currentStep, 1);
